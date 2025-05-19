@@ -1,0 +1,30 @@
+name: Bot cada 1 minuto agrega línea
+
+on:
+  schedule:
+    - cron: '* * * * *'  # Cada minuto (UTC)
+  workflow_dispatch:
+
+jobs:
+  agregar-linea:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Agregar línea a msx.py
+        run: |
+          FECHA=$(date -u '+%Y-%m-%d %H:%M:%S')
+          echo "# Línea generada automáticamente a las $FECHA UTC" >> msx.py
+
+      - name: Configurar Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit y push
+        run: |
+          git add msx.py
+          git commit -m "Bot: añade línea automática - $FECHA"
+          git push
